@@ -9,7 +9,7 @@ import os
 
 def homepage(request):
     if request.method == 'POST':
-        Resume.objects.all().delete()
+        # Resume.objects.all().delete()
         file_form = UploadResumeModelForm(request.POST, request.FILES)
         files = request.FILES.getlist('resume')
         resumes_data = []
