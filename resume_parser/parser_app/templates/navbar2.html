@@ -1,0 +1,41 @@
+{% load static %}
+<nav class="navbar navbar-expand-custom navbar-mainbg">
+  <a class="navbar-brand navbar-logo" href="/index">Resume Parser</a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <i class="fas fa-bars text-white"></i>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto">
+      <div class="hori-selector">
+        <div class="left"></div>
+        <div class="right"></div>
+      </div>
+      <li class="nav-item {% if nbar == 'home' %} active {%endif%}">
+        <a class="nav-link" href="/index"
+          ><i class="fas fa-tachometer-alt"></i>Home</a
+        >
+      </li>
+      <li class="nav-item {% if nbar == 'tool' %} active {%endif%}">
+        <a class="nav-link" href="/tool"
+          ><i class="far fa-address-book"></i>Tools</a
+        >
+      </li>
+      <li class="nav-item {% if nbar == 'about' %} active {%endif%}">
+        <a class="nav-link" href="/about"
+          ><i class="far fa-clone"></i>About Us</a
+        >
+      </li>
+      <li class="nav-item nav-item {% if nbar == 'contact' %} active {%endif%}">
+        <a class="nav-link" href="/contact"
+          ><i class="far fa-calendar-alt"></i>Contact</a
+        >
+      </li>
+    </ul>
+  </div>
+</nav>

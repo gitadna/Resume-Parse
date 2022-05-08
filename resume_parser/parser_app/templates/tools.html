@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+{%include 'head.html'%}
+
+<body>
+    {%include 'navbar2.html'%}
+    <section class="about" id="about">
+        <div class="about-content">
+          <div class="about-text">
+            <h1>
+              about us
+            </h1>
+            <p>We are the aspiring students of K.J. Somaiya Institute of Engineering and Information Technology. We inculcate the habit of ethical behaviour, responsibility and commitment. Our aim is to become industry ready and be capable of working effectively as an individual and in a team.</p>
+            <p>This project is made by us as the third year minor project and we as a team and individual gave the best of us and hope that you liked it!</p>
+            <a href="#" class="btn">Liked It!!</a>
+          </div>
+          <div class="about-img">
+            <img src="https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="">
+          </div>
+        </div>
+    </section>
+  
+    <section style="margin-top: 30px ; font-size: 30px;">
+      <blockquote class="blockquote text-center">
+        <p class="mb-0">SERVICES</p>
+        <!-- <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer> -->
+      </blockquote>
+  
+      <div class="card-deck" style="align-items: center; justify-content: center;">
+  
+        <div class="card border-primary mb-3" style="max-width: 25rem;">
+          <img class="card-img-top" src="{% static 'images/jpg to pdf.svg' %}" alt="Card image cap">
+          <div class="card-body text-primary">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            <div class="text-center">
+            <a href="#" class="btn btn-primary">Upload File</a>
+            </div>
+            <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+          </div>
+        </div>
+  
+        <div class="card border-success mb-3" style="max-width: 25rem;">
+          <img class="card-img-top" src="{% static 'images/pdf-to-word.png' %}" alt="Card image cap">
+          <div class="card-body text-success">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            <div class="text-center">
+              <a href="#" class="btn btn-primary">Upload File</a>
+              </div>
+            <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+          </div>
+        </div>
+  
+        <div class="card border-danger mb-3" style="max-width: 25rem;">
+          <img class="card-img-top" src="{% static 'images/word-to-pdf.png' %}" alt="Card image cap">
+          <div class="card-body text-danger">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            <div class="text-center">
+              <a href="#" class="btn btn-primary">Upload File</a>
+              </div>
+            <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+          </div>
+        </div>
+      </div>
+  
+  
+    </section>
+  
+</body>
+</html>

@@ -6,12 +6,16 @@ NAME_PATTERN      = [{'POS': 'PROPN'}, {'POS': 'PROPN'}]
 # Education (Upper Case Mandatory)
 EDUCATION         = [
                     'BE','B.E.', 'B.E', 'BS', 'B.S', 'ME', 'M.E', 'M.E.', 'MS', 'M.S', 'BTECH', 'MTECH', 
-                    'SSC', 'HSC', 'CBSE', 'ICSE', 'X', 'XII'
+                    'SSC', 'HSC', 'CBSE', 'ICSE', 'X', 'XII','SCHOOL', 'COLLEGE', 'UNIVERS', 'ACADEMY', 
+                    'FACULTY', 'INSTITUTE', 'FACULDADES','SCHOLA', 'SCHULE', 'LISE', 'LYCEUM', 'LYCEE', 
+                    'POLYTECHNIC', 'KOLEJ', 'ÜNIVERS', 'OKUL'
                     ]
 
 NOT_ALPHA_NUMERIC = r'[^a-zA-Z\d]'
 
 NUMBER            = r'\d+'
+
+COLLEGE_NAME = r"[\w\W]* ((Hospital|University|Centre|Law School|School|Academy|Department)[\w -]*)[\w\W]*$", r"\1"
 
 # For finding date ranges
 MONTHS_SHORT      = r'(jan)|(feb)|(mar)|(apr)|(may)|(jun)|(jul)|(aug)|(sep)|(oct)|(nov)|(dec)'

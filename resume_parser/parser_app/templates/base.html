@@ -82,12 +82,12 @@
               {% for resume in resumes %}
                 <tr>
                   <td>{{forloop.counter}}</td>
-                  <td><a href="{{resume.resume.url}}" target="_blank">{{resume.resume.url|truncatechars:20}}</a></td>
+                  <td><a href="{{resume.resume.url}}" target="_blank">See the file Uploaded</a></td>
                   <td>{{resume.name}}</td>
                   <td>{{resume.email}}</td>
                   <td>{{resume.mobile_number}}</td>
                   <td>{{resume.education}}</td>
-                  <td>{{resume.company_names}}</td>
+                  <td>{{resume.company_name}}</td>
                   <td>{{resume.designation}}</td>
                   <td>{{resume.college_name}}</td>
                   <td>{{resume.total_experience}}</td>

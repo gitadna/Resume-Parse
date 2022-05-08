@@ -16,6 +16,9 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords 
+import pytesseract
+from PIL import Image
+
 
 def extract_text_from_pdf(pdf_path):
     '''
@@ -53,6 +56,21 @@ def extract_text_from_doc(doc_path):
     text = [line.replace('\t', ' ') for line in temp.split('\n') if line]
     return ' '.join(text)
 
+def extract_text_from_image(image_path):
+    '''
+    Helper function to extract plain text from images that .jpeg or .jpg or .png files
+
+    :param image_path: path to .jpeg or .jpg or .png file to be extracted 
+    :return: string of extracted text
+
+    '''
+    path_to_tesseract = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    pytesseract.pytesseract.tesseract_cmd = path_to_tesseract
+    image = Image.open(image_path)
+    text = pytesseract.image_to_string(image)
+    # print(text)
+    return text
+
 def extract_text(file_path, extension):
     '''
     Wrapper function to detect the file extension and call text extraction function accordingly
@@ -66,6 +84,8 @@ def extract_text(file_path, extension):
             text += ' ' + page
     elif extension == '.docx' or extension == '.doc':
         text = extract_text_from_doc(file_path)
+    elif extension == '.jpeg' or extension == '.jpg' or extension == '.png':
+        text = extract_text_from_image(file_path)
     return text
 
 def extract_entity_sections(text):
@@ -134,6 +154,9 @@ def extract_name(nlp_text, matcher):
     :param matcher: object of `spacy.matcher.Matcher`
     :return: string of full name
     '''
+    # nlp_text = nlp(resume_text)
+    # print('nlp text',nlp_text)
+    # First name and Last name are always Proper Nouns
     pattern = [cs.NAME_PATTERN]
     
     matcher.add('NAME', None, *pattern)
@@ -143,6 +166,16 @@ def extract_name(nlp_text, matcher):
     for match_id, start, end in matches:
         span = nlp_text[start:end]
         return span.text
+    # pattern = [cs.NAME_PATTERN]
+    
+    # matcher.add('NAME', None, *pattern)
+    
+    # matches = matcher(nlp_text)
+    
+    # for match_id, start, end in matches:
+    #     span = nlp_text[start:end]
+    #     return span.text
+
 
 def extract_mobile_number(text):
     '''
@@ -159,30 +192,102 @@ def extract_mobile_number(text):
             return '+' + number
         else:
             return number
-
-def extract_skills(nlp_text, noun_chunks):
+def extract_college_name(text):
     '''
-    Helper function to extract skills from spacy nlp text
+    Helper function to extract college name from text
 
-    :param nlp_text: object of `spacy.tokens.doc.Doc`
-    :param noun_chunks: noun chunks extracted from nlp text
-    :return: list of skills extracted
+    :param text: plain text extracted from resume file
+    :return: string of extracted college name
     '''
-    tokens = [token.text for token in nlp_text if not token.is_stop]
+    # COLLEGE_NAME = re.compile(r"([A-Z][^\\s,.]+[.]?\\s[(]?)*(College|University|Institute|Law School|School of|Academy)[^,\\d]*(?=,|\\d)")
+    # college_name = re.findall(r"([A-Z][^\\s,.]+[.]?\\s[(]?)*(College|University|Institute|Law School|School of|Academy)[^,\\d]*(?=,|\\d)",text)
+    # college_name = re.sub(r"([A-Z][^\\s,.]+[.]?\\s[(]?)*(College|University|Institute|Law School|School of|Academy)[^,\\d]*(?=,|\\d)",r'\1',text)
+    # print(collegs)
+    # contained = [x for x in collegs if x in text]
+    college_name = re.sub(r"[\w\W]* ((Hospital|University|Centre|Law School|School|Academy|Department)[\w -]*)[\w\W]*$", r"\1",text)
+    # print(contained)
+    # college_name= 'hello'
+    # print(text)
+    return college_name
+
+def extract_company_name(text):
+    return 'comapy name'
+
+
+
+def extract_skills(input_text):
+    stop_words = set(nltk.corpus.stopwords.words('english'))
+    word_tokens = nltk.tokenize.word_tokenize(input_text)
+ 
+    # remove the stop words
+    filtered_tokens = [w for w in word_tokens if w not in stop_words]
+ 
+    # remove the punctuation
+    filtered_tokens = [w for w in word_tokens if w.isalpha()]
+ 
+    # generate bigrams and trigrams (such as artificial intelligence)
+    bigrams_trigrams = list(map(' '.join, nltk.everygrams(filtered_tokens, 2, 3)))
+ 
+    # we create a set to keep the results in.
+    found_skills = set()
     data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'skills.csv')) 
-    skills = list(data.columns.values)
-    skillset = []
-    # check for one-grams
-    for token in tokens:
-        if token.lower() in skills:
-            skillset.append(token)
+    SKILLS_DB = list(data.columns.values)
+    # we search for each token in our skills database
+    for token in filtered_tokens:
+        if token.lower() in SKILLS_DB:
+            found_skills.add(token)
+ 
+    # we search for each bigram and trigram in our skills database
+    for ngram in bigrams_trigrams:
+        if ngram.lower() in SKILLS_DB:
+            found_skills.add(ngram)
+    # print('found skills are',found_skills)
+    return found_skills
+ 
+
+# def extract_skills(nlp_text, noun_chunks):
+#     '''
+#     Helper function to extract skills from spacy nlp text
+
+#     :param nlp_text: object of `spacy.tokens.doc.Doc`
+#     :param noun_chunks: noun chunks extracted from nlp text
+#     :return: list of skills extracted
+#     '''
+#     tokens = [token.text for token in nlp_text if not token.is_stop]
+#     data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'skills.csv')) 
+#     skills = list(data.columns.values)
+#     skillset = []
+#     # check for one-grams
+#     for token in tokens:
+#         if token.lower() in skills:
+#             skillset.append(token)
     
-    # check for bi-grams and tri-grams
-    for token in noun_chunks:
-        token = token.text.lower().strip()
-        if token in skills:
-            skillset.append(token)
-    return [i.capitalize() for i in set([i.lower() for i in skillset])]
+#     # check for bi-grams and tri-grams
+#     for token in noun_chunks:
+#         token = token.text.lower().strip()
+#         if token in skills:
+#             skillset.append(token)
+#     # print(i.capitalize() for i in set([i.lower() for i in skillset]))
+#     return [i.capitalize() for i in set([i.lower() for i in skillset])]
+
+def extract_educations(input_text):
+    organizations = []
+ 
+    # first get all the organization names using nltk
+    for sent in nltk.sent_tokenize(input_text):
+        for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
+            if hasattr(chunk, 'label') and chunk.label() == 'ORGANIZATION':
+                organizations.append(' '.join(c[0] for c in chunk.leaves()))
+ 
+    # we search for each bigram and trigram for reserved words
+    # (college, university etc...)
+    education = set()
+    for org in organizations:
+        for word in cs.EDUCATION:
+            if org.upper().find(word) >= 0:
+                education.add(org)
+    # print('print eduction',education)
+    return education
 
 def cleanup(token, lower = True):
     if lower:

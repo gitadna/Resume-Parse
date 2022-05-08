@@ -6,6 +6,7 @@ import spacy
 import pprint
 from spacy.matcher import Matcher
 import multiprocessing as mp
+import re
 
 class ResumeParser(object):
     def __init__(self, resume):
@@ -17,6 +18,8 @@ class ResumeParser(object):
             'mobile_number'     : None,
             'skills'            : None,
             'education'         : None,
+            'company_names'      : None,
+            'college_name'      : None,
             'experience'        : None,
             'competencies'      : None,
             'measurable_results': None
@@ -35,14 +38,21 @@ class ResumeParser(object):
         name       = utils.extract_name(self.__nlp, matcher=self.__matcher)
         email      = utils.extract_email(self.__text)
         mobile     = utils.extract_mobile_number(self.__text)
-        skills     = utils.extract_skills(self.__nlp, self.__noun_chunks)
-        edu        = utils.extract_education([sent.string.strip() for sent in self.__nlp.sents])
+        # skills     = utils.extract_skills(self.__nlp, self.__noun_chunks)
+        skills     = utils.extract_skills(self.__text)
+        # edu        = utils.extract_education([sent.string.strip() for sent in self.__nlp.sents])
+        edu = utils.extract_educations(self.__text)
+        # skilling = utils.extract_skilling(self.__text)
         experience = utils.extract_experience(self.__text)
         entities   = utils.extract_entity_sections(self.__text_raw)
+        company_name = utils.extract_company_name(self.__nlp)
+        college_name = utils.extract_college_name(self.__text_raw)
         self.__details['name'] = name
         self.__details['email'] = email
         self.__details['mobile_number'] = mobile
         self.__details['skills'] = skills
+        self.__details['college_name'] = college_name
+        self.__details['company_names'] = company_name
         # self.__details['education'] = entities['education']
         self.__details['education'] = edu
         self.__details['experience'] = experience
