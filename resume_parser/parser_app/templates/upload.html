@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+{%include 'head.html'%}
+
+<body>
+    {%include 'navbar2.html'%}
+    <form method="POST" action="/upload?upload_name={{upload}}" enctype="multipart/form-data" >
+    {% csrf_token %}
+    <input type="hidden" name="upload" value="{{upload}}" />
+    {% if upload == 'img2pdf' %}
+    <input type="file" name="image" accept="image/*" />
+    {%elif upload == 'pdf2doc' %}
+    <input type="file" name="image" accept="application/pdf" />
+    {%elif upload == 'doc2pdf' %}
+    <input type="file" name="image" accept=".docx,.doc" />
+    {%endif%}
+    <button type="submit" id="import" name="import" class="btn btn-success" style="margin-top: 2%; border-radius: 0">Upload</button>
+</form>
+</body>
+</html>

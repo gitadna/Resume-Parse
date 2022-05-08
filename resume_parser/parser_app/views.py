@@ -4,10 +4,13 @@ from .models import Resume, UploadResumeModelForm
 from django.contrib import messages
 from django.conf import settings
 from django.db import IntegrityError
+from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, FileResponse, Http404
 import os
+import pdf2docx
+from docx2pdf import convert
 from resume_parser.resume_parser import ResumeParser
-
+from PIL import Image
 def index(request):
     return render(request,'index.html',{'nbar':'home'})
 
@@ -15,6 +18,54 @@ def tool(request):
     return render(request,'tools.html',{'nbar':'tool'})
 def contact(request):
     return render(request,'contact.html',{'nbar':'contact'})
+def upload(request):
+    upload_name = request.GET.get('upload_name')
+
+    if request.method == 'POST':
+        file_name = request.POST['upload']
+
+        file = request.FILES['image']
+        filename = file.name
+        extension = filename.split('.')[1]
+        if(file_name=='img2pdf' and (extension == 'jpg' or extension == 'jpeg' or extension=='png')):
+            temp_path = f'/tmp/{filename}'
+            with open(temp_path,'wb') as f:
+                f.write(file.read())
+            pdf_path = f'/tmp/{filename.split(".")[0]}.pdf'
+            # print(pdf_path)
+            img = Image.open(temp_path)
+            im = img.convert('RGB')
+            im.save(pdf_path)
+
+            fs = FileSystemStorage(pdf_path)
+            response = FileResponse(fs.open(pdf_path,'rb'),content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{filename.split(".")[0]}.pdf"'
+
+            return response
+        elif (file_name=='pdf2doc' and (extension == "pdf")):
+            temp_path = f'/tmp/{filename}'
+            with open(temp_path,'wb') as f:
+                f.write(file.read())
+            docx_path = f'/tmp/{filename.split(".")[0]}.docx'
+            pdf_to_docx = pdf2docx.parse(temp_path,docx_path,start=0,end=None)
+            fs = FileSystemStorage(docx_path)
+            response = FileResponse(fs.open(docx_path,'rb'),content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+            response['Content-Disposition'] = f'attachment; filename="{filename.split(".")[0]}.docx"'
+
+            return response
+        elif (file_name=='doc2pdf' and (extension=='doc' or extension=='docx')):
+            temp_path = f'/tmp/{filename}'
+            with open(temp_path,'wb') as f:
+                f.write(file.read())
+            pdf_path = f'/tmp/{filename.split(".")[0]}.pdf'
+            convert(temp_path,pdf_path)
+
+            fs = FileSystemStorage(pdf_path)
+            response = FileResponse(fs.open(pdf_path,'rb'),content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{filename.split(".")[0]}.pdf"'
+            
+            return response
+    return render(request,'upload.html',{'upload':upload_name})
 
 def homepage(request):
     if request.method == 'POST':
@@ -32,7 +83,7 @@ def homepage(request):
                     # extracting resume entities
                     parser = ResumeParser(os.path.join(settings.MEDIA_ROOT, resume.resume.name))
                     data = parser.get_extracted_data()
-                    print(data)
+                    # print(data)
                     resumes_data.append(data)
                     resume.name               = data.get('name')
                     resume.email              = data.get('email')
@@ -40,7 +91,7 @@ def homepage(request):
                     if data.get('education') is not None:
                         resume.education      = ', '.join(data.get('education'))
                     else:
-                        print('here')
+                        # print('here')
                         resume.education      = None
                     resume.company_name        = data.get('company_names')
                     resume.college_name       = data.get('college_name')

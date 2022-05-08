@@ -2,4 +2,13 @@ Django==2.2.10
 django-crispy-forms==1.7.2
 pyresparser
 gunicorn
+tesseract
+wheel
+PyPDF2
+Pillow
+docx2txt
+docx2pdf
+pdf2docx
+pandas
+numpy
 spacy==2.3.5
